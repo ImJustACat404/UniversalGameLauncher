@@ -190,7 +190,9 @@ class GameLauncherUI:
             x += width + 10
         return buttons
 
-    def apply_game_filter(self, selected_game=None):
+    def apply_game_filter(self, selected_game=None, preserve_scroll=False):
+        previous_scroll = self.scroll_offset
+        previous_selection = self.selected_game
         if self.active_filter == "Favorites":
             games = [game for game in self.games
                      if (game.get_platform(), game.get_id()) in self.favorite_ids]
@@ -200,10 +202,22 @@ class GameLauncherUI:
             games = [game for game in self.games if game.get_platform() == self.active_filter]
 
         self.displayed_games = sorted(games, key=lambda game: game.get_name().upper())
-        self.scroll_offset = 0
+        if preserve_scroll:
+            max_scroll = max(0, len(self.displayed_games) - self.max_visible)
+            self.scroll_offset = min(previous_scroll, max_scroll)
+        else:
+            self.scroll_offset = 0
         self.selected_game = (self.displayed_games.index(selected_game)
                               if selected_game in self.displayed_games
-                              else (0 if self.displayed_games else None))
+                              else (min(previous_selection, len(self.displayed_games) - 1)
+                                    if preserve_scroll and self.displayed_games
+                                    else (0 if self.displayed_games else None)))
+        if (preserve_scroll and self.selected_game is not None
+                and self.selected_game < self.scroll_offset):
+            self.scroll_offset = self.selected_game
+        elif (preserve_scroll and self.selected_game is not None
+              and self.selected_game >= self.scroll_offset + self.max_visible):
+            self.scroll_offset = self.selected_game - self.max_visible + 1
         if self.selected_game is not None:
             self.note_input = self.displayed_games[self.selected_game].get_notes()
         else:
@@ -380,7 +394,7 @@ class GameLauncherUI:
                             else:
                                 Core.favorite_game(favorite_key[1], favorite_key[0])
                                 self.favorite_ids.add(favorite_key)
-                            self.apply_game_filter(game)
+                            self.apply_game_filter(game, preserve_scroll=True)
                     elif buttons["add_game"].collidepoint(mx, my):
                         new_game = add_game_dialog()
                         self.games.append(new_game)
