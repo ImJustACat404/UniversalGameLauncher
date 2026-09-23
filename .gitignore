@@ -1,0 +1,24 @@
+# Python bytecode and tool caches
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# IDE settings
+.idea/
+.vscode/
+
+# Local launcher data and credentials
+Data/Games.db
+Data/Games.db-*
+Data/UData.json
+
+# Images downloaded automatically from game platforms
+Img/Steam/
+Img/Epic/
+
+# Build and packaging output
+build/
+dist/
+*.spec
