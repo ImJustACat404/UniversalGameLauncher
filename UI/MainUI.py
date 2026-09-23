@@ -5,7 +5,6 @@ import sys
 import threading
 import queue
 from Core import Core
-import Objects.Game as Game
 
 pygame.init()
 
@@ -66,7 +65,7 @@ def wrap_text(text, font, max_width):
 
 
 def add_game_dialog():
-    new_game = Game.ExeGame
+    new_game = None
 
     def submit():
         nonlocal new_game
@@ -397,10 +396,9 @@ class GameLauncherUI:
                             self.apply_game_filter(game, preserve_scroll=True)
                     elif buttons["add_game"].collidepoint(mx, my):
                         new_game = add_game_dialog()
-                        self.games.append(new_game)
-                        self.apply_game_filter(new_game)
-                        # Check and add to displayed games too, implement later!!!!!!
-                        # =======================================================
+                        if new_game is not None:
+                            self.games.append(new_game)
+                            self.apply_game_filter(new_game)
                     elif buttons["add_account"].collidepoint(mx, my):
                         print("Add Account clicked")
                     elif buttons["remove_game"].collidepoint(mx, my):
