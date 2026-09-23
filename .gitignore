@@ -13,10 +13,12 @@ __pycache__/
 Data/Games.db
 Data/Games.db-*
 Data/UData.json
+UData.json
 
 # Images downloaded automatically from game platforms
 Img/Steam/
 Img/Epic/
+Img/exe/
 
 # Build and packaging output
 build/
